@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
   try {
     const appointments = await Appointment.findAll({
       where: { userId: req.userId },
-      include: [{ model: Therapist }],
+      include: [{ model: Therapist, as: 'therapist' }],
       order: [['appointmentDate', 'ASC']]
     });
 

@@ -9,6 +9,7 @@ const journalRoutes = require('./routes/journal');
 const diaryRoutes = require('./routes/diary');
 const therapistRoutes = require('./routes/therapists');
 const appointmentRoutes = require('./routes/appointments');
+const publicAppointmentRoutes = require('./routes/publicAppointments');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/journal', journalRoutes);
 app.use('/api/diary', diaryRoutes);
 app.use('/api/therapists', therapistRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/public/appointments', publicAppointmentRoutes);
 
 const PORT = process.env.PORT || 3000;
 
