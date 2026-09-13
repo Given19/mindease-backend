@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    let { firstName, lastName, email, password } = req.body;
 
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ message: 'All fields are required.' });
@@ -53,7 +53,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required.' });
