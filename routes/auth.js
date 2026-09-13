@@ -14,6 +14,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
+    email = email.trim().toLowerCase(); 
     const existing = await User.findOne({ where: { email } });
 
     if (existing) {
@@ -57,7 +58,8 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required.' });
     }
-
+     
+    email = email.trim().toLowerCase();
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
