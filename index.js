@@ -1,4 +1,4 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/database');
@@ -10,7 +10,9 @@ const diaryRoutes = require('./routes/diary');
 const therapistRoutes = require('./routes/therapists');
 const appointmentRoutes = require('./routes/appointments');
 const publicAppointmentRoutes = require('./routes/publicAppointments');
-const chatRoutes = require('./routes/community');
+const chatRoutes = require('./routes/chat');
+const communityRoutes = require('./routes/community');
+
 const app = express();
 
 app.use(cors());
@@ -27,7 +29,8 @@ app.use('/api/diary', diaryRoutes);
 app.use('/api/therapists', therapistRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/public/appointments', publicAppointmentRoutes);
-app.use('/api/chat', communityRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/community', communityRoutes);
 
 const PORT = process.env.PORT || 3000;
 
@@ -36,7 +39,7 @@ async function start() {
     await sequelize.authenticate();
     console.log('Database connection established.');
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log('Database synced.');
 
     app.listen(PORT, () => {
