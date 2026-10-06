@@ -1,6 +1,7 @@
 ﻿require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const sequelize = require('./config/database');
 
 const authRoutes = require('./routes/auth');
@@ -12,11 +13,14 @@ const appointmentRoutes = require('./routes/appointments');
 const publicAppointmentRoutes = require('./routes/publicAppointments');
 const chatRoutes = require('./routes/chat');
 const communityRoutes = require('./routes/community');
+const therapistSignupRoutes = require('./routes/therapistSignup');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.json({ status: 'MindEase API is running.' });
@@ -31,6 +35,8 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/public/appointments', publicAppointmentRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/public/therapist-signup', therapistSignupRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,7 +45,7 @@ async function start() {
     await sequelize.authenticate();
     console.log('Database connection established.');
 
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log('Database synced.');
 
     app.listen(PORT, () => {

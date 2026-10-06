@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
   try {
     const { lat, lng } = req.query;
 
-    const therapists = await Therapist.findAll();
+    const therapists = await Therapist.findAll({ where: { status: 'approved' } });
 
     if (!lat || !lng) {
       return res.json(therapists);
@@ -38,12 +38,7 @@ router.get('/', async (req, res) => {
 
     const withDistance = therapists
       .map((t) => {
-        const distanceKm = getDistanceKm(
-          userLat,
-          userLng,
-          t.latitude,
-          t.longitude
-        );
+        const distanceKm = getDistanceKm(userLat, userLng, t.latitude, t.longitude);
 
         return {
           ...t.toJSON(),

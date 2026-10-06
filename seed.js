@@ -65,7 +65,8 @@ async function seed() {
     await Appointment.destroy({ where: {}, truncate: true, cascade: true });
     await Therapist.destroy({ where: {}, truncate: true, cascade: true });
 
-    await Therapist.bulkCreate(therapists);
+    const therapistsWithStatus = therapists.map(t => ({ ...t, status: 'approved' }));
+await Therapist.bulkCreate(therapistsWithStatus);
     console.log('Re-seeded therapists successfully.');
     process.exit(0);
   } catch (err) {

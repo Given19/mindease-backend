@@ -12,7 +12,15 @@ const Therapist = sequelize.define('Therapist', {
   priceOnline: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
   pricePhone: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
   latitude: { type: DataTypes.FLOAT, allowNull: false },
-  longitude: { type: DataTypes.FLOAT, allowNull: false }
+  longitude: { type: DataTypes.FLOAT, allowNull: false },
+  licenseNumber: { type: DataTypes.STRING, allowNull: true, defaultValue: '' },
+  licenseBody: { type: DataTypes.STRING, allowNull: true, defaultValue: '' },
+  country: { type: DataTypes.STRING, allowNull: true, defaultValue: '' },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'pending' // pending | approved | rejected
+  }
 });
 
 module.exports = Therapist;

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join MindEase as a Therapist</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; background: #F4FAF7; color: #1E2B24; max-width: 500px; margin: 0 auto; padding: 30px 20px; }
+    h1 { color: #2F8F6E; font-size: 24px; }
+    label { display: block; margin-top: 14px; font-size: 13px; font-weight: 600; color: #4B5D54; }
+    input, textarea, select { width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+    textarea { height: 80px; }
+    button { width: 100%; background: #2F8F6E; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+    #result { margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; }
+    .success { background: #E3F2EC; color: #0F6E56; }
+    .error { background: #FDECEA; color: #A33; }
+  </style>
+</head>
+<body>
+
+  <h1>Join MindEase as a Therapist</h1>
+  <p>Fill in your details below. Your profile will be reviewed before it appears to users.</p>
+
+  <form id="signupForm">
+    <label>Full Name</label>
+    <input type="text" id="name" required />
+
+    <label>Specialty</label>
+    <input type="text" id="specialty" placeholder="e.g. Anxiety & Stress" required />
+
+    <label>Bio</label>
+    <textarea id="bio" placeholder="A short description of your experience and approach"></textarea>
+
+    <label>Email</label>
+    <input type="email" id="email" required />
+
+    <label>Phone Number</label>
+    <input type="text" id="phoneNumber" />
+
+    <label>Office Address (used to show your location to nearby users)</label>
+    <input type="text" id="officeAddress" placeholder="Street, City, Country" required />
+
+    <label>Country</label>
+    <input type="text" id="country" required />
+
+    <label>License / Registration Number</label>
+    <input type="text" id="licenseNumber" required />
+
+    <label>Licensing Body</label>
+    <input type="text" id="licenseBody" placeholder="e.g. HPCSA" required />
+
+    <label>In-Person Session Price</label>
+    <input type="number" id="priceInPerson" />
+
+    <label>Online Session Price</label>
+    <input type="number" id="priceOnline" />
+
+    <label>Phone Session Price</label>
+    <input type="number" id="pricePhone" />
+
+    <button type="submit">Submit Application</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const payload = {
+        name: document.getElementById('name').value,
+        specialty: document.getElementById('specialty').value,
+        bio: document.getElementById('bio').value,
+        email: document.getElementById('email').value,
+        phoneNumber: document.getElementById('phoneNumber').value,
+        officeAddress: document.getElementById('officeAddress').value,
+        country: document.getElementById('country').value,
+        licenseNumber: document.getElementById('licenseNumber').value,
+        licenseBody: document.getElementById('licenseBody').value,
+        priceInPerson: parseFloat(document.getElementById('priceInPerson').value) || 0,
+        priceOnline: parseFloat(document.getElementById('priceOnline').value) || 0,
+        pricePhone: parseFloat(document.getElementById('pricePhone').value) || 0
+      };
+
+      const resultDiv = document.getElementById('result');
+
+      try {
+        const response = await fetch('/api/public/therapist-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        resultDiv.style.display = 'block';
+
+        if (response.ok) {
+          resultDiv.className = 'success';
+          resultDiv.textContent = data.message;
+          document.getElementById('signupForm').reset();
+        } else {
+          resultDiv.className = 'error';
+          resultDiv.textContent = data.message;
+        }
+      } catch (err) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'error';
+        resultDiv.textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  </script>
+
+</body>
+</html>

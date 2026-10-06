@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MindEase Admin</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; background: #F4FAF7; color: #1E2B24; max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+    h1 { color: #2F8F6E; }
+    .card { background: white; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+    .card h3 { margin: 0 0 6px; }
+    .card p { margin: 2px 0; font-size: 14px; color: #444; }
+    .buttons { margin-top: 10px; display: flex; gap: 10px; }
+    button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .approve { background: #2F8F6E; color: white; }
+    .reject { background: #D9534F; color: white; }
+    #passwordBox { margin-bottom: 20px; }
+    input { padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 250px; }
+  </style>
+</head>
+<body>
+
+  <h1>Pending Therapist Applications</h1>
+
+  <div id="passwordBox">
+    <input type="password" id="adminPassword" placeholder="Admin password" />
+    <button onclick="loadPending()" style="background:#2F8F6E;color:white;">Load</button>
+  </div>
+
+  <div id="list"></div>
+
+  <script>
+    async function loadPending() {
+      const password = document.getElementById('adminPassword').value;
+      const list = document.getElementById('list');
+      list.innerHTML = 'Loading...';
+
+      try {
+        const response = await fetch('/api/admin/therapists/pending', {
+          headers: { 'x-admin-password': password }
+        });
+
+        if (!response.ok) {
+          list.innerHTML = 'Incorrect password or server error.';
+          return;
+        }
+
+        const therapists = await response.json();
+
+        if (therapists.length === 0) {
+          list.innerHTML = '<p>No pending applications.</p>';
+          return;
+        }
+
+        list.innerHTML = therapists.map(t => `
+          <div class="card" id="card-${t.id}">
+            <h3>${t.name}</h3>
+            <p><strong>Specialty:</strong> ${t.specialty}</p>
+            <p><strong>Email:</strong> ${t.email}</p>
+            <p><strong>Phone:</strong> ${t.phoneNumber}</p>
+            <p><strong>Address:</strong> ${t.officeAddress}</p>
+            <p><strong>Country:</strong> ${t.country}</p>
+            <p><strong>License:</strong> ${t.licenseNumber} (${t.licenseBody})</p>
+            <p><strong>Bio:</strong> ${t.bio}</p>
+            <p><strong>Prices:</strong> In-Person R${t.priceInPerson} / Online R${t.priceOnline} / Phone R${t.pricePhone}</p>
+            <div class="buttons">
+              <button class="approve" onclick="decide(${t.id}, 'approve')">Approve</button>
+              <button class="reject" onclick="decide(${t.id}, 'reject')">Reject</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = 'Error loading applications.';
+      }
+    }
+
+    async function decide(id, action) {
+      const password = document.getElementById('adminPassword').value;
+
+      await fetch(`/api/admin/therapists/${id}/${action}`, {
+        method: 'POST',
+        headers: { 'x-admin-password': password }
+      });
+
+      document.getElementById(`card-${id}`).remove();
+    }
+  </script>
+
+</body>
+</html>
